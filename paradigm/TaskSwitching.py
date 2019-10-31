@@ -95,17 +95,14 @@ for idx, r in block1.iterrows():
         block1.loc[idx,'cue'] = np.random.choice(['A','E','I','O','U'], size = 1)[0]
     else:
         block1.loc[idx,'cue'] = np.random.choice(['V','F','L','Q','C'], size = 1)[0]
-    
-data = np.column_stack((trial,words,color))
-df = pd.DataFrame(data, columns = ['trial','word','color'])
+
 
 
 #%% Initiate Stimuli
 
-win = visual.Window([400,400], gammaErrorPolicy='warn')
+win = visual.Window([800,800], gammaErrorPolicy='warn')
 message = visual.TextStim(win, pos = ([0,0]))
 message.autoDraw = True
-
 
 #%% Helper Functions
 
@@ -113,9 +110,7 @@ message.autoDraw = True
 
 #%% Trial Loop
 for i in range(0,4):
-    print(words[i])
-    message.text = words[i]
-    message.color = color[i]
+    message.text = block1['target_word'][i] 
     win.flip()
     C = core.Clock()
     C.reset()
