@@ -56,6 +56,8 @@ d = {
 							 "vlot", "vuilbak", "vulkaan", "wagon", "windmolen", "zeppelin", "zetel", "zitbank"])
 }
 
+x = 3
+
 # randomize the order of the stimuli
 for idx, name in enumerate(['lism','lila','nosm','nola']):
     d[name] = np.random.choice(d[name], size = len(d[name]), replace = False)
