@@ -7,8 +7,6 @@ Created on Tue Oct 22 11:58:20 2019
 
 #%% Import Libraries
 
-# test comment from github
-
 from psychopy import visual, core, event
 import numpy as np
 import pandas as pd
@@ -16,9 +14,6 @@ from stimuli.stimuli_dictionary import stimuli
 
 #%% Randomization
 d = stimuli
-
-# test on local pc
-
 
 # randomize the order of the stimuli
 for idx, name in enumerate(['lism','lila','nosm','nola']):
