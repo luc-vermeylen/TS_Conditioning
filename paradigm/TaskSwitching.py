@@ -15,6 +15,9 @@ from stimuli.stimuli_dictionary import stimuli
 #%% Randomization
 d = stimuli
 
+# test on local pc
+
+
 # randomize the order of the stimuli
 for idx, name in enumerate(['lism','lila','nosm','nola']):
     d[name] = np.random.choice(d[name], size = len(d[name]), replace = False)
@@ -44,14 +47,27 @@ for idx, r in block1.iterrows():
 block1['task'][block1['task'] == 'size'].count()
 
 
+# add non repeating cues (a cue cannot be repeated until N-3)
 cues = (['A','E','I','O','U'] + ['V','F','L','Q','C'] )*4
 
-# remove repetitions in cues !!!
+# remove repetitions in cues !!! + you could do this step in the previous one
 for idx, r in block1.iterrows():
     if block1.loc[idx,'task'] == 'size':
+        random_cue = np.random.choice(['A','E','I','O','U'], size = 1)[0]
         block1.loc[idx,'cue'] = np.random.choice(['A','E','I','O','U'], size = 1)[0]
+        if idx > 0:
+            while block1.loc[idx-1,'cue'] == random_cue:
+                random_cue = np.random.choice(['A','E','I','O','U'], size = 1)[0]
+                block1.loc[idx,'cue'] = np.random.choice(['A','E','I','O','U'], size = 1)[0]
     else:
+        random_cue = np.random.choice(['V','F','L','Q','C'], size = 1)[0]
         block1.loc[idx,'cue'] = np.random.choice(['V','F','L','Q','C'], size = 1)[0]
+        if idx > 0: 
+            while block1.loc[idx-1,'cue'] == random_cue:
+                random_cue = np.random.choice(['V','F','L','Q','C'], size = 1)[0]
+                block1.loc[idx,'cue'] = np.random.choice(['V','F','L','Q','C'], size = 1)[0]
+        
+    
 
 
 
