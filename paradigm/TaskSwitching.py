@@ -157,40 +157,45 @@ for block_i in np.arange(1,5): # block loop
         D = D.append(B, ignore_index = True)
 
 
-#%% RUN
+#%% Variables
+
+data = D # randomized stimuli list
+filename = "data/cTSdata_" + str(ID).zfill(3) + "_{}.csv".format(datetime.now().strftime("%Y%m%d-%H%M%S"))
+
+event.globalKeys.add(key='q', func=core.quit, name='shutdown', modifiers=['ctrl'])
+
+FIX = .5
+CUE = 1
+STIM = 5
+BLANK = .5
+FB = .5
+ITI = 1
 
 win = visual.Window([800,800], units="norm")
-ufix = visual.TextStim(win = win, text = '+', pos = [0, .075])
-lfix = visual.TextStim(win = win, text = '+', pos = [0, -.075])
+ufix = visual.TextStim(win = win, text = '+', pos = [0, .075]) # upper fixation
+lfix = visual.TextStim(win = win, text = '+', pos = [0, -.075]) # lower fixation
 cue = visual.TextStim(win = win, pos = [0, .075])
 target = visual.TextStim(win = win, pos = [0, -.075])
 blank = visual.TextStim(win = win, text = '')
 fb = visual.TextStim(win = win)
 
-filename = "data/cTSdata_" + str(ID).zfill(3) + "_{}.csv".format(datetime.now().strftime("%Y%m%d-%H%M%S"))
+#%% Run
 
-data = D
-for i in range(D.shape[0]):
-    
+for i in range(D.shape[0]):  
     # Fixation
-    ufix.draw(); lfix.draw(); win.flip()
-    core.wait(.2)
+    ufix.draw(); lfix.draw(); win.flip(); core.wait(FIX)
     
     # Cue
     cue.text = data['cue'][i]
-    cue.draw()
-    win.flip()
-    core.wait(.3)
+    cue.draw(); lfix.draw(); win.flip(); core.wait(CUE)
     
     # Target
     target.text = data['target_word'][i] 
-    cue.draw(); target.draw()
-    win.flip()
+    cue.draw(); target.draw(); win.flip()
     
-    # record response
-    C = core.Clock()
-    C.reset()
-    resp = event.waitKeys(maxWait = 1, keyList = ['s','d','k','l','escape'], timeStamped=C, clearEvents = True);   
+    # Response
+    C = core.Clock(); C.reset()
+    resp = event.waitKeys(maxWait = STIM, keyList = ['s','d','k','l'], timeStamped=C, clearEvents = True);   
     if resp:
         resp_key = resp[0][0]; resp_rt = resp[0][1]
         correct = 1 if resp_key == data.loc[i,'cresp'] else 0
@@ -199,23 +204,20 @@ for i in range(D.shape[0]):
         resp_key = None; resp_rt = None; correct = 0
     
     # Blank 
-    blank.draw(); win.flip()
-    core.wait(.2)
+    blank.draw(); win.flip(); core.wait(BLANK)
     
-    # Feedback
+    # Feedback (if correct or training)
     fb_text = '+01' if data['reward'][i] == 'low' else '+10'
-    fb.text = fb_text; fb.draw(); win.flip()
-    core.wait(.3)
+    fb.text = fb_text if correct == 1 else ''
+    fb.draw(); win.flip(); core.wait(FB)
     
     # ITI
-    blank.draw(); win.flip()
-    core.wait(.2)
+    blank.draw(); win.flip(); core.wait(ITI)
     
-    # save data
+    # Save/append data
     data.loc[i,'resp'] = resp_key; data.loc[i,'rt'] = resp_rt; data.loc[i,'correct'] = correct;    
     data.loc[[i]].to_csv(filename, mode = 'a', header = (True if i == 0 else False), index = False)
 
-    
 #%% Close
 
 win.close()
