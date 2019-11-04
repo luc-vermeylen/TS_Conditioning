@@ -79,19 +79,68 @@ if counterbalancing['rhand_size'] == 'left':
 else:
     keys = {'size': {'left': 'k', 'right': 'l'}, 'animacy': {'left': 's', 'right': 'd'}}
 
+# practice stimuli
+Pdict = {'lism': np.array(['ui']*3),
+     'lila': np.array(['koe']*3),
+     'nosm': np.array(['krijt']*3),
+     'nola': np.array(['auto']*3)
+     }
+
+P = pd.DataFrame(Pdict)
+Pdf = pd.melt(P, var_name = 'target_type', value_name = 'target_word') # wide -> long format
+Pdf['subID'] = [ID]*P.size
+Pdf['block'] = ['0']*P.size
+Pdf['phase'] = ['practice']*P.size
+Pdf['transition'] = (['repetition']*6+['switch']*6)
+Pdf['group'] = [counterbalancing['reward_group']]*P.size
+Pdf['reward'] = [None]*P.size
+Pdf = Pdf.sample(frac=1).reset_index(drop=True) # shuffle the order
+Pdf['trial'] = np.arange(1,13)
+Pdf.loc[0,'transition'] = None
+Pdf['task'] = np.random.choice(['animacy','size'], size = 1)[0]
+for idx, r in Pdf.iterrows():
+    if idx == 0:
+        Pdf.loc[idx,'task'] = np.random.choice(['animacy','size'], size = 1)[0]
+    else:
+        if Pdf.loc[idx,'transition'] == 'repetition':
+            Pdf.loc[idx,'task'] = Pdf.loc[idx-1,'task']
+        else:
+            if Pdf.loc[idx-1,'task'] == 'animacy':
+                Pdf.loc[idx,'task'] = 'size'
+            else:
+                Pdf.loc[idx,'task'] = 'animacy'
+for idx, r in Pdf.iterrows():
+    if Pdf.loc[idx,'task'] == 'size':
+        Pdf.loc[idx,'cue'] = np.random.choice(size_cues, size = 1)[0]
+    else:
+        Pdf.loc[idx,'cue'] = np.random.choice(animacy_cues, size = 1)[0]
+for idx, r in Pdf.iterrows():
+            if Pdf.loc[idx,'task'] == 'size':
+                if Pdf.loc[idx,'target_type'] in ['lism','nosm']:
+                    Pdf.loc[idx,'cresp'] = keys['size']['left']
+                elif Pdf.loc[idx,'target_type'] in ['lila','nola']:
+                    Pdf.loc[idx,'cresp'] = keys['size']['right']
+            elif Pdf.loc[idx,'task'] == 'animacy':
+                if Pdf.loc[idx,'target_type'] in ['nosm','nola']:
+                    Pdf.loc[idx,'cresp'] = keys['animacy']['left']
+                elif Pdf.loc[idx,'target_type'] in ['lism','lila']:
+                    Pdf.loc[idx,'cresp'] = keys['animacy']['right']
+        
+    
+
 # randomize the order of the stimuli
 for idx, name in enumerate(['lism','lila','nosm','nola']):
     d[name] = np.random.choice(d[name], size = len(d[name]), replace = False)
 df = pd.DataFrame(d)
 
 D = pd.DataFrame() # initiatlize final dataframe
+block_counter = 1
 for block_i in np.arange(1,5): # block loop
     for phase_i, phase in enumerate(['cued','free']): # phase loop
-        
         # the main design 
-        B = df.iloc[(block_i*10)-10:block_i*10,:] # subset (to take different targets each phase/block)
+        B = df.iloc[(block_counter*10)-10:block_counter*10,:] # subset (to take different targets each phase/block)
         B = pd.melt(B, var_name = 'target_type', value_name = 'target_word') # wide -> long format
-        B['ID'] = [ID]*40
+        B['subID'] = [ID]*40
         B['block'] = [block_i]*40
         B['phase'] = [phase]*40
         B['transition'] = (['repetition']*5+['switch']*5)*4  # balanced amount of transitions per target_type
@@ -103,6 +152,8 @@ for block_i in np.arange(1,5): # block loop
             B['reward'] = (['high']*4 + ['low']*1 + ['low']*4 + ['high']*1)*4
         B = B.sample(frac=1).reset_index(drop=True) # shuffle the order
         B['trial'] = np.arange(1,41)
+        B.loc[0,'transition'] = None # first trial doesn't have a task transition
+        
         
         # add the task (animacy or size) based on shuffled (and balanced) transitions
         for idx, r in B.iterrows():
@@ -148,19 +199,37 @@ for block_i in np.arange(1,5): # block loop
                 B.loc[idx,'cue'] = '#'
                 
         # determine the correct response
-        B['cresp'] = np.where((B.task == 'size') & (B.target_type.isin(['lism','nosm'])), keys['size']['left'],
-                              np.where((B.task == 'size') & (B.target_type.isin(['lila','nola'])), keys['size']['right'],
-                              np.where((B.task == 'animacy') & (B.target_type.isin(['nosm','nola'])), keys['animacy']['left'],
-                              np.where((B.task == 'animacy') & (B.target_type.isin(['lism','lila'])), keys['animacy']['left'], 'ERROR'))))
-                    
+        for idx, r in B.iterrows():
+            if B.loc[idx,'task'] == 'size':
+                if B.loc[idx,'target_type'] in ['lism','nosm']:
+                    B.loc[idx,'cresp'] = keys['size']['left']
+                elif B.loc[idx,'target_type'] in ['lila','nola']:
+                    B.loc[idx,'cresp'] = keys['size']['right']
+            elif B.loc[idx,'task'] == 'animacy':
+                if B.loc[idx,'target_type'] in ['nosm','nola']:
+                    B.loc[idx,'cresp'] = keys['animacy']['left']
+                elif B.loc[idx,'target_type'] in ['lism','lila']:
+                    B.loc[idx,'cresp'] = keys['animacy']['right']
+                
         # append data to another dataframe
         D = D.append(B, ignore_index = True)
+        block_counter += 1
 
+D = Pdf.append(D,ignore_index = True)
+
+# chance column order + inspect if everthing is ok
+design = D[['subID','group','block','phase','trial','target_type','target_word','task','cue','transition','reward','cresp']]
+design.to_csv('data/design.csv', index= False)
+
+# test if design is correct
+#T1 = design.groupby(['block','phase','target_type','transition']).size() # design is balanced
+#T2 = design.duplicated(subset = 'target_word'); print(sum(A2)); # target words are unique
+#T3 = design.groupby(['block','phase','task','cresp']).size()
 
 #%% Variables
 
 # dialogue box
-info = {'ID': '911', 'DebugMode': ''}
+info = {'ID': '911', 'DebugMode': ''} # add age/gender questions after experiment!
 dlg = gui.DlgFromDict(dictionary = info, title = 'Experiment', order = ['ID','DebugMode'], show = True)
 if not dlg.OK: core.quit();
 if info['ID'] == '': core.quit();
@@ -169,7 +238,7 @@ data = D # randomized stimuli list
 filename = "data/cTSdata_" + info['ID'].zfill(3) + "_{}.csv".format(datetime.now().strftime("%Y%m%d-%H%M%S"))
 
 event.globalKeys.clear()
-event.globalKeys.add(key='q', func=core.quit, name='shutdown', modifiers=['ctrl']) # ctrl-q to quit at any time
+event.globalKeys.add(key='escape', func=core.quit, name='shutdown')
 
 FIX = .5
 CUE = 1
@@ -178,11 +247,11 @@ BLANK = .5
 FB = .5
 ITI = 1
 
-win = visual.Window([800,800], units="norm")
-ufix = visual.TextStim(win = win, text = '+', pos = [0, .075]) # upper fixation
-lfix = visual.TextStim(win = win, text = '+', pos = [0, -.075]) # lower fixation
-cue = visual.TextStim(win = win, pos = [0, .075])
-target = visual.TextStim(win = win, pos = [0, -.075])
+win = visual.Window([800,800], units="norm", gammaErrorPolicy='ignore')
+ufix = visual.TextStim(win = win, text = '+', pos = [0, .05]) # upper fixation (5% o/t distance center - top)
+lfix = visual.TextStim(win = win, text = '+', pos = [0, -.05]) # lower fixation (5% o/t distance center - bottom)
+cue = visual.TextStim(win = win, pos = [0, .05])
+target = visual.TextStim(win = win, pos = [0, -.05])
 blank = visual.TextStim(win = win, text = '')
 fb = visual.TextStim(win = win)
 
@@ -193,6 +262,7 @@ fb = visual.TextStim(win = win)
 
 
 # Practice Trials
+
 
 
 # Experimental Trials
@@ -215,7 +285,6 @@ for i in range(D.shape[0]):
     if resp:
         resp_key = resp[0][0]; resp_rt = resp[0][1]
         correct = 1 if resp_key == data.loc[i,'cresp'] else 0
-        if resp_key == 'escape': win.close(); core.quit();
     else:
         resp_key = None; resp_rt = None; correct = 0
     
