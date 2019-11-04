@@ -7,7 +7,7 @@ Created on Tue Oct 22 11:58:20 2019
 
 #%% Import Libraries
 
-from psychopy import visual, core, event
+from psychopy import visual, core, event, gui
 import numpy as np
 import pandas as pd
 from datetime import datetime
@@ -159,10 +159,17 @@ for block_i in np.arange(1,5): # block loop
 
 #%% Variables
 
-data = D # randomized stimuli list
-filename = "data/cTSdata_" + str(ID).zfill(3) + "_{}.csv".format(datetime.now().strftime("%Y%m%d-%H%M%S"))
+# dialogue box
+info = {'ID': '911', 'DebugMode': ''}
+dlg = gui.DlgFromDict(dictionary = info, title = 'Experiment', order = ['ID','DebugMode'], show = True)
+if not dlg.OK: core.quit();
+if info['ID'] == '': core.quit();
 
-event.globalKeys.add(key='q', func=core.quit, name='shutdown', modifiers=['ctrl'])
+data = D # randomized stimuli list
+filename = "data/cTSdata_" + info['ID'].zfill(3) + "_{}.csv".format(datetime.now().strftime("%Y%m%d-%H%M%S"))
+
+event.globalKeys.clear()
+event.globalKeys.add(key='q', func=core.quit, name='shutdown', modifiers=['ctrl']) # ctrl-q to quit at any time
 
 FIX = .5
 CUE = 1
@@ -180,6 +187,15 @@ blank = visual.TextStim(win = win, text = '')
 fb = visual.TextStim(win = win)
 
 #%% Run
+
+# Instructions
+
+
+
+# Practice Trials
+
+
+# Experimental Trials
 
 for i in range(D.shape[0]):  
     # Fixation
@@ -214,9 +230,15 @@ for i in range(D.shape[0]):
     # ITI
     blank.draw(); win.flip(); core.wait(ITI)
     
+    # Block Feedback
+    
     # Save/append data
     data.loc[i,'resp'] = resp_key; data.loc[i,'rt'] = resp_rt; data.loc[i,'correct'] = correct;    
     data.loc[[i]].to_csv(filename, mode = 'a', header = (True if i == 0 else False), index = False)
+    
+# Questionnaire
+
+
 
 #%% Close
 
