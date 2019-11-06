@@ -14,6 +14,8 @@ from datetime import datetime
 import itertools
 
 #%% Stimuli
+
+# main stimuli
 stimuli = {
      'lism': np.array(["aardappel", "aardbei", "abrikoos", "appel", "avocado", "bacterie", "banaan", "bes", 
 							 "bloemkool", "bloesem", "boon", "bosbes", "boterbloem", "druif", "duif", "duizendpoot", 
@@ -57,17 +59,26 @@ stimuli = {
 							 "vlot", "vuilbak", "vulkaan", "wagon", "windmolen", "zeppelin", "zetel", "zitbank"])
 }
 
+# practice stimuli
+Pdict = {
+    'lism': np.array(['ui']*3),
+    'lila': np.array(['koe']*3),
+    'nosm': np.array(['krijt']*3),
+    'nola': np.array(['auto']*3)
+}
+
+
 #%% Randomization
 d = stimuli
 ID = 1
 
-# counterbalancing
+#%% counterbalancing
 cue_size = ['vowel','consonant']
 reward_group = ['repeat','switch']
 rhand_size = ['left','right']
 keys = ['cue_size', 'reward_group', 'rhand_size']
 counterbalancing = [dict(zip(keys,combination)) for combination in itertools.product(cue_size,reward_group,rhand_size)]
-counterbalancing = counterbalancing[ID%8]
+counterbalancing = counterbalancing[ID%8] 
 
 if counterbalancing['cue_size'] == 'vowel':
     size_cues = ['A','E','I','O','U']; animacy_cues = ['V','F','L','Q','C']
@@ -79,12 +90,7 @@ if counterbalancing['rhand_size'] == 'left':
 else:
     keys = {'size': {'left': 'k', 'right': 'l'}, 'animacy': {'left': 's', 'right': 'd'}}
 
-# practice stimuli
-Pdict = {'lism': np.array(['ui']*3),
-     'lila': np.array(['koe']*3),
-     'nosm': np.array(['krijt']*3),
-     'nola': np.array(['auto']*3)
-     }
+#%% practice randomization
 
 P = pd.DataFrame(Pdict)
 Pdf = pd.melt(P, var_name = 'target_type', value_name = 'target_word') # wide -> long format
@@ -128,7 +134,7 @@ for idx, r in Pdf.iterrows():
         
     
 
-# randomize the order of the stimuli
+#%% randomize the order of the stimuli
 for idx, name in enumerate(['lism','lila','nosm','nola']):
     d[name] = np.random.choice(d[name], size = len(d[name]), replace = False)
 df = pd.DataFrame(d)
@@ -229,7 +235,7 @@ design.to_csv('data/design.csv', index= False)
 #%% Variables
 
 # dialogue box
-info = {'ID': '911', 'DebugMode': ''} # add age/gender questions after experiment!
+info = {'ID': '999', 'DebugMode': ''} # add age/gender questions after experiment!
 dlg = gui.DlgFromDict(dictionary = info, title = 'Experiment', order = ['ID','DebugMode'], show = True)
 if not dlg.OK: core.quit();
 if info['ID'] == '': core.quit();
@@ -247,7 +253,8 @@ BLANK = .5
 FB = .5
 ITI = 1
 
-win = visual.Window([800,800], units="norm", gammaErrorPolicy='ignore')
+win = visual.Window([1000,1000], units="norm", gammaErrorPolicy='ignore')
+instr = visual.TextStim(win = win, text = '', height = .05, wrapWidth = 1.75)
 ufix = visual.TextStim(win = win, text = '+', pos = [0, .05]) # upper fixation (5% o/t distance center - top)
 lfix = visual.TextStim(win = win, text = '+', pos = [0, -.05]) # lower fixation (5% o/t distance center - bottom)
 cue = visual.TextStim(win = win, pos = [0, .05])
@@ -255,17 +262,52 @@ target = visual.TextStim(win = win, pos = [0, -.05])
 blank = visual.TextStim(win = win, text = '')
 fb = visual.TextStim(win = win)
 
-#%% Run
+#%% Instructions
 
-# Instructions
+start = \
+"Welkom en alvast bedankt voor je deelname aan dit experiment! " \
+"Alvorens je begint willen we je eerst even aan twee belangrijke " \
+"regels van uw experimentdeelname herinneren: \n\n" \
+"Deze experimentsafname gebeurt in groep. Probeer hier rekening mee te houden: " \
+"Indien u eventuele vragen, onzekerheden of opmerkingen hebt over het experiment, vraag dit " \
+"dan eerst aan de proefleider en indien mogelijk zonder de andere deelnemers te storen. \n\n" \
+"Dit experiment is een reactietijden-experiment. " \
+"In reactietijden-experimenten is het steeds de bedoeling zo snel en accuraat mogelijk te " \
+"reageren! Om genoeg data te kunnen verzamelen bieden we daarbij veel opeenvolgende " \
+"beurten aan. Dit kan soms repetitief en eentonig overkomen, dus vragen wij er uw aandacht " \
+"zo goed mogelijk bij te houden.\n\n" \
+"Druk op spatie om verder te gaan..."
 
+instr.text = start
+instr.draw(); win.flip();
+event.waitKeys()
 
+prac_instr = \
+"Dit is het experiment, let op, de procedure is een beetje complex, dus lees aandachtig: " \
+"Je zal straks steeds een letter en een woord zien verschijnen. Bijvoorbeeld: \n\n" \
+"A\n" \
+"auto\n\n" \
+"Jouw taak bestaat er uit om eerst te bepalen of de letter een klinker of een " \
+"medeklinker is, en vervolgens de taak uit te voeren afhankelijk van het type letter. \n\n" \
+"Namelijk, als de letter een klinker is, moet je in deze taak: \n" \
+"op de letter {} drukken wanneer het woord niet levend is, en de letter {} \
+    wanneer wel levend. ".format(keys['size']['left'].upper(), keys['size']['right'].upper()) \
+        
+"Met levend bedoelen we hier elk soort levend organisme: dier, boom, plant, fruit, of groente. \n\n" \
+    
+# "Echter, wanneer de letter een medeklinker is, moet je in deze taak: \n" \
+# "op de letter S drukken wanneer het woord niet levend is, en de letter D wanneer wel levend. " \
+# "Met levend bedoelen we hier elk soort levend organisme: dier, boom, plant, fruit, of groente. \n\n" \
+# "Je zal soms ook meerdere beurten na elkaar het # tekentje zien verschijnen in plaats van een letter. " \
+# "Op deze beurten mag je zelf kiezen welke taak je uitvoert. Echter, probeer dit zo willekeurig " \
+# "mogelijk te doen! Alsof een dobbelsteen de keuze zou bepalen van welke taak je uitvoert!\n\n" \
+# "Druk op spatie om verder te gaan..."
 
-# Practice Trials
+instr.text = prac_instr
+instr.draw(); win.flip();
+event.waitKeys()
 
-
-
-# Experimental Trials
+#%% Experimental Trials
 
 for i in range(D.shape[0]):  
     # Fixation
@@ -305,7 +347,8 @@ for i in range(D.shape[0]):
     data.loc[i,'resp'] = resp_key; data.loc[i,'rt'] = resp_rt; data.loc[i,'correct'] = correct;    
     data.loc[[i]].to_csv(filename, mode = 'a', header = (True if i == 0 else False), index = False)
     
-# Questionnaire
+    
+#%% Questions
 
 
 

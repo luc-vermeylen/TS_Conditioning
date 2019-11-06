@@ -48,3 +48,27 @@ stimuli = {
 							 "tractor", "loopband", "tribune", "valies", "vat", "veerboot", "venster", "vlieger", 
 							 "vlot", "vuilbak", "vulkaan", "wagon", "windmolen", "zeppelin", "zetel", "zitbank"])
 }
+
+
+stim2 = {
+    'smev': np.array([2, 4]*40), # smaller even
+    'smod': np.array([1, 3]*40),
+    'laev': np.array([6, 8]*40),
+    'laod': np.array([7, 9]*40)
+}
+
+
+# practice stimuli
+practice = {
+    'lism': np.array(['ui']*4),
+    'lila': np.array(['koe']*4),
+    'nosm': np.array(['krijt']*4),
+    'nola': np.array(['auto']*4)
+}
+
+practice2 = {
+    'smev': np.array([2, 4]*2), # smaller even
+    'smod': np.array([1, 3]*2),
+    'laev': np.array([6, 8]*2),
+    'laod': np.array([7, 9]*2)
+}
