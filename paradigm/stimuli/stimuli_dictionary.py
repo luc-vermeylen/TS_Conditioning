@@ -6,7 +6,7 @@ Created on Thu Oct 31 18:25:42 2019
 """
 import numpy as np
 
-stimuli = {
+cued_stim = {
      'lism': np.array(["aardappel", "aardbei", "abrikoos", "appel", "avocado", "bacterie", "banaan", "bes", 
 							 "bloemkool", "bloesem", "boon", "bosbes", "boterbloem", "druif", "duif", "duizendpoot", 
 							 "eekhoorn", "egel", "erwt", "framboos", "fruit", "garnaal", "goudvis", "grasspriet", 
@@ -50,7 +50,7 @@ stimuli = {
 }
 
 
-stim2 = {
+free_stim = {
     'smev': np.array([2, 4]*40), # smaller even
     'smod': np.array([1, 3]*40),
     'laev': np.array([6, 8]*40),
@@ -59,14 +59,14 @@ stim2 = {
 
 
 # practice stimuli
-practice = {
+cued_stim_prac = {
     'lism': np.array(['ui']*4),
     'lila': np.array(['koe']*4),
     'nosm': np.array(['krijt']*4),
     'nola': np.array(['auto']*4)
 }
 
-practice2 = {
+free_stim_prac = {
     'smev': np.array([2, 4]*2), # smaller even
     'smod': np.array([1, 3]*2),
     'laev': np.array([6, 8]*2),
