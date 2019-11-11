@@ -23,7 +23,7 @@ cued_stim = {
 							 "giraffe", "gnoe", "gorilla", "haai", "havik", "hengst", "hert", "hond", 
 							 "hyena", "ijsbeer", "jachtluipaard", "kameel", "kangoeroe", "krokodil", "lama", "leeuw", 
 							 "luipaard", "lynx", "muildier", "naaldboom", "neushoorn", "nijlpaard", "octopus", "olifant", 
-							 "ooievaar", "orka", "os", "panda", "panter", "pauw", "pinguïn", "poema", 
+							 "ooievaar", "orka", "os", "panda", "panter", "pauw", "pinguin", "poema", 
 							 "pony", "potvis", "primaat", "ram", "ree", "rendier", "rund", "schaap", 
 							 "slang", "spar", "stier", "struik", "struisvogel", "tijger", "vinvis", "vos", 
 							 "walrus", "walvis", "wilg", "wolf", "zebra", "zeeleeuw", "zwaan", "zwijn"]),
@@ -51,10 +51,10 @@ cued_stim = {
 
 
 free_stim = {
-    'smev': np.array([2, 4]*40), # smaller even
-    'smod': np.array([1, 3]*40),
-    'laev': np.array([6, 8]*40),
-    'laod': np.array([7, 9]*40)
+    'smev': np.array([2, 4]*60), # smaller even
+    'smod': np.array([1, 3]*60),
+    'laev': np.array([6, 8]*60),
+    'laod': np.array([7, 9]*60)
 }
 
 

@@ -12,8 +12,10 @@ import pandas as pd
 import itertools
 from stimuli.stimuli_dictionary import cued_stim, free_stim, cued_stim_prac, free_stim_prac
 
-def randomize(ID):
+def randomize(ID, Age, Gender, Handedness):
     '''
+    
+    Create a randomized and counterbalanced stimulus list for the current participant
     
     Parameters
     ----------
@@ -25,18 +27,24 @@ def randomize(ID):
     -------
     design : Pandas DataFame
         The dataframe containing the complete stimulus list (including practice trials)
-    keys: the response keys for the free phase
+    keys: Dictionary
+        the response keys for the free phase
         
     '''
 
     #%% Variables
     
-    nBlocks = 4 
+    # experiment variables
+    nBlocks = 6
     Phases = ['prac_cued', 'prac_free', 'cued', 'free']
+    nstim = 60 # sample 60 stim from each target_type
+    
+    # sample from main stimulus set without replacement
+    
     
     # randomize word targets to avoid relationship reward - stimulus
     for idx, name in enumerate(['lism','lila','nosm','nola']):
-        cued_stim[name] = np.random.choice(cued_stim[name], size = len(cued_stim[name]), replace = False)
+        cued_stim[name] = np.random.choice(cued_stim[name], size = nstim, replace = False)
     wide_cued = pd.DataFrame(cued_stim); wide_free = pd.DataFrame(free_stim)
     wide_cued_prac = pd.DataFrame(cued_stim_prac); wide_free_prac = pd.DataFrame(free_stim_prac)
     
@@ -91,13 +99,16 @@ def randomize(ID):
                 temp = pd.melt(temp, var_name = 'target_type', value_name = 'target')
                 
             # set some general columns
-            temp['subID'] = ID
+            temp['subID'] = ID; temp['Age'] = Age; temp['Gender'] = Gender; temp['Handedness'] = Handedness;
+            temp['Q1'] = None; temp['Q2'] = None;
             temp['group'] = counterbalancing['reward_group']
             temp['block'] = block_i
             temp['phase'] = phase
             temp['resp'] = None
             temp['rt'] = None
             temp['correct'] = None
+            temp['time_elapsed'] = None
+            temp['points'] = None
             
             # determine transitions and rewards
             if phase == 'cued' or phase == 'prac_cued':
@@ -188,8 +199,8 @@ def randomize(ID):
             D = D.append(temp, ignore_index = True)
             
     # chance column order
-    design = D[['subID','group','block','phase','trial','target_type',\
-                'target','task','cue','transition','reward','cresp','resp','rt','correct']]
+    design = D[['subID','Age','Gender','Handedness','group','block','phase','trial','target_type',\
+                'target','task','cue','transition','reward','cresp','resp','rt','correct','points','time_elapsed', 'Q1','Q2']]
     design.to_csv('data/current_stimulus_list.csv', index= False)
     
-    return design, keys
+    return design, keys, counterbalancing
