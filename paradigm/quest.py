@@ -109,11 +109,12 @@ Tot welke groep denk je dat jij behoorde?"
 
     
     #%% Close
+    
     if testing == True:
         win.close(); core.quit()
     
     return resp_q1, resp_q2
 
-# from psychopy import visual
-# win = visual.Window([1200,800], units="norm", gammaErrorPolicy='ignore')
-# q1, q2 = questionnaire(win, testing = True)
+#from psychopy import visual
+#win = visual.Window([1200,800], units="norm", gammaErrorPolicy='ignore')
+#q1, q2 = questionnaire(win, testing = True)
