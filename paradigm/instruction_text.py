@@ -5,11 +5,7 @@ Created on Thu Nov  7 12:37:54 2019
 @author: luc
 """
 
-#%% Import libraries
-
 from psychopy import core, visual, event
-
-#%% Introduction text
 
 def introduction(win, size, animacy, free_keys):
 
@@ -18,7 +14,7 @@ def introduction(win, size, animacy, free_keys):
         instr.text = text;
         instr.draw(); win.flip();
         text_resp = event.waitKeys()
-        return text_resp 
+        return text_resp
     
     start = ("Welkom en alvast bedankt voor je deelname aan dit experiment! " 
              "Alvorens je begint willen we je eerst even aan twee belangrijke " 
@@ -75,7 +71,7 @@ def introduction(win, size, animacy, free_keys):
     show_text(prac_instr2, win)
     show_text(prac_instr3, win)
 
-#%% Cued practice text
+#%%
 
 def cued_prac_instructions(win, size, animacy, free_keys):
 
@@ -97,7 +93,7 @@ def cued_prac_instructions(win, size, animacy, free_keys):
     
     show_text(prac_instr4,win)
 
-#%% Free practice text
+#%%
 
 def free_prac_instructions(win, size, animacy, free_keys):
 
@@ -124,7 +120,7 @@ def free_prac_instructions(win, size, animacy, free_keys):
     
     show_text(prac_instr5,win)
 
-#%% Review instructions
+#%% 
 
 def review_instructions(win, size, animacy, free_keys):
     
@@ -142,7 +138,7 @@ def review_instructions(win, size, animacy, free_keys):
     show_text(prac_instr6,win)[0]
 
         
-#%% cued instructions
+#%% 
         
 def cued_instructions(win, size, animacy, free_keys):
 
@@ -164,7 +160,7 @@ def cued_instructions(win, size, animacy, free_keys):
   show_text(prac_instr4,win)
 
 
-#%% free instructions
+#%%
   
 def free_instructions(win, size, animacy, free_keys):
 

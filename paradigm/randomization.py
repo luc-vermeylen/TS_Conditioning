@@ -29,8 +29,7 @@ def randomize(ID, Age, Gender, Handedness):
         The dataframe containing the complete stimulus list (including practice trials)
     keys: Dictionary
         the response keys for the free phase
-    counterbalancing: Dictionary
-        the complete counterbalancing dictionary for the current participant
+        
     '''
 
     #%% Variables
@@ -40,9 +39,12 @@ def randomize(ID, Age, Gender, Handedness):
     Phases = ['prac_cued', 'prac_free', 'cued', 'free']
     nstim = 60 # sample 60 stim from each target_type
     
+    # sample from main stimulus set without replacement
+    
+    
     # randomize word targets to avoid relationship reward - stimulus
     for idx, name in enumerate(['lism','lila','nosm','nola']):
-        cued_stim[name] = np.random.choice(cued_stim[name], size = nstim, replace = False) # sample from main stimulus set without replacement
+        cued_stim[name] = np.random.choice(cued_stim[name], size = nstim, replace = False)
     wide_cued = pd.DataFrame(cued_stim); wide_free = pd.DataFrame(free_stim)
     wide_cued_prac = pd.DataFrame(cued_stim_prac); wide_free_prac = pd.DataFrame(free_stim_prac)
     
