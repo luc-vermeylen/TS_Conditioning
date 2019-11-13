@@ -131,7 +131,7 @@ for block in np.arange(1,7):
             if resp:
                 resp_key = resp[0][0]; resp_rt = resp[0][1]
                 if resp_key == 'backspace': break
-                if resp_key == 'escape': core.quit()
+                if resp_key == 'escape': win.close(); core.quit()
                 if data.loc[i,'phase'] == 'cued' or data.loc[i,'phase'] == 'prac_cued':
                     correct = 1 if resp_key == data.loc[i,'cresp'] else 0
                 elif data.loc[i,'phase'] == 'free' or data.loc[i,'phase'] == 'prac_free':

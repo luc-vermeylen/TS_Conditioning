@@ -34,8 +34,8 @@ Druk op spatie om verder te gaan..."""
 Je zal straks steeds een letter en een woord zien verschijnen. Bijvoorbeeld: \n\n
  A\n
 koe\n\n
-Jouw taak bestaat er uit om eerst te bepalen of de letter een klinker of een 
-medeklinker is, en vervolgens de taak uit te voeren afhankelijk van het type letter. \n\n
+Jouw taak bestaat er uit om eerst te bepalen of de letter een klinker of een medeklinker is, 
+en vervolgens de taak uit te voeren afhankelijk van het type letter. \n\n
 Namelijk, als de letter een {} is, moet je in deze taak: \n
 op de letter G drukken wanneer het woord kleiner is, en de letter H het woord groter is dan een basketbal.\n\n
 Echter, wanneer de letter een {} is, moet je in deze taak: \n
@@ -43,7 +43,8 @@ op de letter G drukken wanneer het woord niet levend is, en de letter H wanneer 
 Met levend bedoelen we hier elk soort levend organisme: dier, boom, plant, fruit, of groente. \n\n
 Druk op spatie om verder te gaan...""".format(size,animacy)
     
-    prac_instr2 = """Je zal soms ook meerdere beurten na elkaar het # tekentje en een cijfer zien verschijnen in plaats van een letter en een woord. 
+    prac_instr2 = """Je zal soms ook meerdere beurten na elkaar het # tekentje en een cijfer zien verschijnen 
+in plaats van een letter en een woord. \n
 Jouw taak bestaat er uit om ofwel te beoordelen of het cijfer even of oneven is,
 ofwel te beoordelen of het cijfer kleiner of groter dan 5 is.\n\n
 Op deze beurten mag je zelf kiezen welke taak je uitvoert. Echter, probeer dit zo willekeurig 
@@ -105,7 +106,8 @@ def free_prac_instructions(win, size, animacy, free_keys):
         text_resp = event.waitKeys()
         return text_resp
 
-    prac_instr5 = """Nu zal je meerdere beurten na elkaar het # tekentje en een cijfer zien verschijnen in plaats van een letter en een woord. 
+    prac_instr5 = """Nu zal je meerdere beurten na elkaar het # tekentje en een cijfer zien verschijnen 
+in plaats van een letter en een woord.\n
 Jouw taak bestaat er uit om ofwel te beoordelen of het cijfer even of oneven is, 
 ofwel te beoordelen of het cijfer kleiner of groter dan 5 is.\n\n
 Op deze beurten mag je zelf kiezen welke taak je uitvoert. Echter, probeer dit zo willekeurig 
@@ -181,3 +183,4 @@ op de letter {} drukken wanneer het cijfer oneven is,
 en de letter {} wanneer het cijfer even is.\n\n
 Druk op spatie om te starten...""".format(free_keys['nsize']['left'].upper(),free_keys['nsize']['right'].upper(),free_keys['parity']['left'].upper(),free_keys['parity']['right'].upper())
     
+    show_text(prac_instr5,win)
