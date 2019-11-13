@@ -17,7 +17,7 @@ def questionnaire(win, testing):
     t = visual.TextStim(win = win, text = '', height = .05, wrapWidth = 1, font = 'monospace')
     q = visual.TextStim(win = win, text = '', pos = [0,.8], height = .075, wrapWidth = 1.5, font = 'monospace')
     qInstr = visual.TextStim(win = win, text = '', pos = [0,.6], height = .05, wrapWidth = 1.5, font = 'monospace', italic = True)
-    continue_button = visual.RatingScale(win, choices=['','Klik hier om verder te gaan als je klaar bent...', ''],
+    continue_button = visual.RatingScale(win, choices=[' ','Klik hier om verder te gaan als je klaar bent...', ' '],
         markerStart=0.5, singleClick=False, scale = None, labels = None, tickHeight = 2, size = 1, stretch = 2.5,
         textSize = .65, showValue = False, acceptPreText = 'Maak een keuze', acceptText = 'Klik om verder te gaan...',
         acceptSize = 2, mouseOnly = True, marker = 'hover')
@@ -114,6 +114,6 @@ Tot welke groep denk je dat jij behoorde?"
     
     return resp_q1, resp_q2
 
-# from psychopy import visual
-# win = visual.Window([1200,800], units="norm", gammaErrorPolicy='ignore')
-# q1, q2 = questionnaire(win, testing = True)
+#from psychopy import visual
+#win = visual.Window([1200,800], units="norm")
+#q1, q2 = questionnaire(win, testing = True)

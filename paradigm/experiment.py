@@ -26,7 +26,7 @@ debugging = True
 
 # Dialogue box
 info = {'ID': '999', 'Leeftijd': '', 'Geslacht': ['V','M','X'], 'Handvoorkeur': ['Rechts','Geen','Links']} # add age/gender questions after experiment!
-dlg = gui.DlgFromDict(dictionary = info, title = 'Experiment Setup', order = ['ID', 'Leeftijd', 'Geslacht', 'Handvoorkeur'], show = True)
+dlg = gui.DlgFromDict(dictionary = info, title = 'Experiment Setup', order = ['ID', 'Leeftijd', 'Geslacht', 'Handvoorkeur'])
 if not dlg.OK: core.quit();
 if info['ID'] == '': core.quit();
 
@@ -39,18 +39,18 @@ header = pd.DataFrame([data.columns])
 header.to_csv(filename, mode = 'a', header = False, index = False)
 
 # Global keys and clock
-event.globalKeys.clear()
-event.globalKeys.add(key='escape', func=core.quit, name='shutdown')
+#event.globalKeys.clear()
+#event.globalKeys.add(key='escape', func=core.quit, name='shutdown')
 globalClock = core.Clock(); globalClock.reset()
 
 # Timing
 if debugging:
-    FIX = 0; CUE = 0; STIM = 10; BLANK = 0; FB = .25; ITI = 0; BLOCKFB = 5
+    FIX = 0; CUE = 0; STIM = 10; BLANK = 0; FB = .2; ITI = 0; BLOCKFB = 20
 else:
     FIX = .5; CUE = 1; STIM = 5; BLANK = .5; FB = .5; ITI = 1; BLOCKFB = 120
 
 # Initialize stimuli
-win = visual.Window([1200,800], units="norm", gammaErrorPolicy='ignore')
+win = visual.Window(fullscr = True, units="norm")
 instr = visual.TextStim(win = win, text = '', height = .05, wrapWidth = 1.75, font = 'monospace')
 ufix = visual.TextStim(win = win, text = '+', pos = [0, .05]) # upper fixation (5% o/t distance center - top)
 lfix = visual.TextStim(win = win, text = '+', pos = [0, -.05]) # lower fixation (5% o/t distance center - bottom)
@@ -61,10 +61,8 @@ fb = visual.TextStim(win = win, text = '')
 block_fb = visual.TextStim(win = win, text = '', height = .05, wrapWidth = 1.75, font = 'monospace')
 debug_prevTrial = visual.TextStim(win = win, text = '', pos = [-.7,0], height = .05, wrapWidth = 1.75, font = 'monospace')
 debug_thisTrial = visual.TextStim(win = win, text = '', pos = [.7,0], height = .05, wrapWidth = 1.75, font = 'monospace')
-debug_respMap = visual.TextStim(win = win, text = 'Free phase response keys:\n' + str(free_keys),\
-                                pos = [0,.7], height = .05, wrapWidth = 1.75, font = 'monospace')
-debug_instr = visual.TextStim(win = win, text = 'Press "p" to skip a block, press "esc" to quit.',\
-                              pos = [0,-.7], height = .05, wrapWidth = 1.75, font = 'monospace')
+debug_respMap = visual.TextStim(win = win, text = 'Free phase response keys:\n' + str(free_keys),pos = [0,.7], height = .05, wrapWidth = 1.75, font = 'monospace')
+debug_instr = visual.TextStim(win = win, text = 'Press "backspace" to skip a block, press "esc" to quit.',pos = [0,-.7], height = .05, wrapWidth = 1.75, font = 'monospace')
 
 #%% Instructions
     
@@ -78,8 +76,6 @@ elif CB['cue_size'] == 'consonant':
 introduction(win,size,animacy,free_keys)
     
 #%% Experimental Trials
-
-# (!!! half the current stimulus list controlling for word length and freq)
 
 cumulative_reward = 0
 
@@ -120,20 +116,22 @@ for block in np.arange(1,7):
             # Target
             if debugging: 
                 debug_respMap.draw(); debug_instr.draw()
-                if i > 0: debug_prevTrial.text = 'PREVIOUS TRIAL:\n\n' + str(data.loc[i-1]); debug_prevTrial.draw()
-                debug_thisTrial.text = 'CURRENT TRIAL:\n\n' + str(data.loc[i]); debug_thisTrial.draw()
+                debug_thisTrial.text = 'CURRENT TRIAL:\n\n' + data.loc[i].to_string()
+                debug_thisTrial.draw()
+                if i > 0: debug_prevTrial.text = 'PREVIOUS TRIAL:\n\n' + data.loc[i-1].to_string(); debug_prevTrial.draw()
             target.text = data['target'][i] 
             cue.draw(); target.draw(); win.flip()
             
             # Collect Response
             C = core.Clock(); C.reset()
-            keys = ['g', 'h','p'] if data.loc[i,'phase'] == 'cued' or data.loc[i,'phase'] == 'prac_cued' else ['s','d','k','l','p']
-            resp = event.waitKeys(maxWait = STIM, keyList = keys, timeStamped=C, clearEvents = True);
+            keys = ['g', 'h', 'backspace', 'escape'] if data.loc[i,'phase'] == 'cued' or data.loc[i,'phase'] == 'prac_cued' else ['s','d','k','l','backspace','escape']
+            resp = event.waitKeys(maxWait = STIM, keyList = keys, timeStamped=C);
             
             # Determine correct response
             if resp:
                 resp_key = resp[0][0]; resp_rt = resp[0][1]
-                if resp_key == 'p': break
+                if resp_key == 'backspace': break
+                if resp_key == 'escape': core.quit()
                 if data.loc[i,'phase'] == 'cued' or data.loc[i,'phase'] == 'prac_cued':
                     correct = 1 if resp_key == data.loc[i,'cresp'] else 0
                 elif data.loc[i,'phase'] == 'free' or data.loc[i,'phase'] == 'prac_free':
@@ -208,7 +206,7 @@ Je hebt in het verlopen blok {} fout(en) gemaakt.\n
 Duw op spatie om naar het volgende blok te gaan.
 '''.format(str(nErrors))  
         block_fb.draw(); win.flip();
-        event.waitKeys(maxWait = BLOCKFB, keyList = ['space'], clearEvents = True)
+        event.waitKeys(maxWait = BLOCKFB, keyList = ['space'])
         
 #%% Questionnaires     
 

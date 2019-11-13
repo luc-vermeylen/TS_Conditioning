@@ -10,7 +10,7 @@ Created on Tue Nov  5 15:33:50 2019
 import numpy as np
 import pandas as pd
 import itertools
-from stimuli.stimuli_dictionary import cued_stim, free_stim, cued_stim_prac, free_stim_prac
+from stimuli_dictionary import cued_stim, free_stim, cued_stim_prac, free_stim_prac
 
 def randomize(ID, Age, Gender, Handedness):
     '''
