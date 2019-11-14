@@ -21,11 +21,11 @@ from instruction_text import introduction, cued_prac_instructions, free_prac_ins
 
 #%% Variables
 
-# this will speed up trial presentation and show trial information on screen (ps. skip blocks by pressing 'p' on target)
-debugging = True
+# this will speed up trial presentation and show trial information on screen (ps. skip blocks by pressing 'backspace' on target)
+debugging = False
 
 # Dialogue box
-info = {'ID': '999', 'Leeftijd': '', 'Geslacht': ['V','M','X'], 'Handvoorkeur': ['Rechts','Geen','Links']} # add age/gender questions after experiment!
+info = {'ID': '999', 'Leeftijd': '', 'Geslacht': ['V','M','X'], 'Handvoorkeur': ['Rechts','Geen','Links']}
 dlg = gui.DlgFromDict(dictionary = info, title = 'Experiment Setup', order = ['ID', 'Leeftijd', 'Geslacht', 'Handvoorkeur'])
 if not dlg.OK: core.quit();
 if info['ID'] == '': core.quit();
@@ -76,8 +76,6 @@ elif CB['cue_size'] == 'consonant':
 introduction(win,size,animacy,free_keys)
     
 #%% Experimental Trials
-
-cumulative_reward = 0
 
 for block in np.arange(1,7):
     for phase_i, phase in enumerate(['prac_cued', 'prac_free', 'cued', 'free']):
